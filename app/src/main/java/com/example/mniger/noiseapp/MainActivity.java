@@ -22,7 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import noiseapp.fragments.ImportFragment;
 import noiseapp.fragments.MainFragment;
 
-public class MainActivity extends AppCompatActivity//nigrojjj
+public class MainActivity extends AppCompatActivity//prova
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     SupportMapFragment sMapFragment;
