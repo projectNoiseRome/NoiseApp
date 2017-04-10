@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "151479415465",
+    "project_id": "firebase-noiseapp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151479415465:android:eff1b44b9dd89fa2",
+        "android_client_info": {
+          "package_name": "com.example.mniger.noiseapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151479415465-jm6498ilhke92k1f0bemp41p1d5a9hs1.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "151479415465-l06hebq0epk8dhhjd4evbilnlvu573pf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mniger.noiseapp",
+            "certificate_hash": "7b8dbed854fddbabbb8d34a968e119c88721cac5"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuCPeKVfo5_KLQYqPQo2RwiKZnQBI7FfU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
