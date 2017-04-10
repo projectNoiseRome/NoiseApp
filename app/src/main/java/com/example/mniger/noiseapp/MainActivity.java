@@ -23,10 +23,12 @@ public class MainActivity extends AppCompatActivity
 
     SupportMapFragment sMapFragment;
 
+    private String email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        email = getIntent().getExtras().getString("email");
         sMapFragment = SupportMapFragment.newInstance();
 
         setContentView(R.layout.activity_main);
