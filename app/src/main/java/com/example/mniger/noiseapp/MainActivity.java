@@ -26,13 +26,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     SupportMapFragment sMapFragment;
-
-
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        email = getIntent().getExtras().getString("email");
         sMapFragment = SupportMapFragment.newInstance();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

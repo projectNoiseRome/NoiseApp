@@ -88,14 +88,20 @@
                  android:layout_weight="1"
                  android:text="@string/sign_out"
                  android:theme="@style/ThemeOverlay.MyDarkButton" />
-
              <Button
+                 android:id="@+id/show_map_button"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:text="Show Map"
+                 android:theme="@style/ThemeOverlay.MyDarkButton" />
+          <!--   <Button
                  android:id="@+id/disconnect_button"
                  android:layout_width="0dp"
                  android:layout_height="wrap_content"
                  android:layout_weight="1"
                  android:text="@string/disconnect"
-                 android:theme="@style/ThemeOverlay.MyDarkButton" />
+                 android:theme="@style/ThemeOverlay.MyDarkButton" />-->
          </LinearLayout>
 
      </RelativeLayout>

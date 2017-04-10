@@ -20,6 +20,8 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import java.io.IOException;
+
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
@@ -34,7 +36,9 @@ public class SignInActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
-    private Button login;
+    private String firstname;
+    private String lastname;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +51,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.show_map_button).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -123,12 +127,33 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
+
+
+            try{
+                addNameSignIn(acct);
+            } catch(IOException ie){
+                ie.printStackTrace();
+            }
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
         }
     }
     // [END handleSignInResult]
+   public void addNameSignIn(GoogleSignInAccount acct) throws IOException{
+
+   //     JSONfunctions addName = new JSONfunctions();
+        String NAME = acct.getDisplayName();
+
+        if (NAME.contains(" ")) {
+            firstname = NAME.split(" ")[0];
+            lastname = NAME.split(" ")[1];
+            email = acct.getEmail();
+            //addName.addUser(email, firstname, lastname);
+        }else email=acct.getEmail();
+            //addName.addUser(email, NAME, NAME);
+
+    }
 
     // [START signIn]
     private void signIn() {
@@ -151,6 +176,12 @@ public class SignInActivity extends AppCompatActivity implements
     }
     // [END signOut]
 
+    private void showMap(){
+        //mapActivityToast();
+        Intent mapIntent = new Intent ( SignInActivity.this, MainActivity.class  );
+        mapIntent.putExtra("email", email);
+        startActivity(mapIntent);
+    }
     // [START revokeAccess]
     private void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
@@ -206,16 +237,12 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                // definisco l'intenzione
-                Intent openPage1 = new Intent(SignInActivity.this,MainActivity.class);
-                // passo all'attivazione dell'activity Pagina.java
-                startActivity(openPage1);
                 break;
             case R.id.sign_out_button:
                 signOut();
                 break;
-            case R.id.disconnect_button:
-                revokeAccess();
+            case R.id.show_map_button:
+                showMap();
                 break;
         }
     }
