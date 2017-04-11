@@ -1,7 +1,15 @@
 package com.example.mniger.noiseapp;
 
+import android.*;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,7 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class NoiseMap extends FragmentActivity implements OnMapReadyCallback {
-
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GoogleMap mMap;
 
     @Override
@@ -37,10 +45,33 @@ public class NoiseMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        int locationPermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        //check permission
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            // Show rationale and request permission.
+            ActivityCompat.requestPermissions(NoiseMap.this ,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION );
+
+        } else {
+            mMap.setMyLocationEnabled(true);
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //this is a little problem but, actually i don't need it
+
+            if( location!=null ){
+                double longitude = location.getLongitude();
+                double latitude = location.getLatitude();
+                LatLng myPos = new LatLng(latitude, longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15));
+            }else Toast.makeText(getApplicationContext(), "Location NULL", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
