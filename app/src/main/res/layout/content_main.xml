@@ -5,16 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.mniger.noiseapp.MainActivity"
+    tools:context="com.pervasive.noiseapp.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
     <FrameLayout
         android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
 
