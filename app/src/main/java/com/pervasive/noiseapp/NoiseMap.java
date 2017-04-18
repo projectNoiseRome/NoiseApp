@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -63,15 +72,17 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap = googleMap;
 
         mMap.setOnMarkerClickListener(this);
-
-        LatLng casa = new LatLng(41.9144113, 12.548262000000022);
+        //Decimal Degrees = degrees + (minutes/60) + (seconds/3600)
+        LatLng Mni = new LatLng(41.9144113, 12.548262000000022);
+        LatLng Boa = new LatLng(41.89186583, 12.5436269);
         LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
 
         myMarker = googleMap.addMarker(new MarkerOptions()
-                .position(casa)
-                .title("Casa")
-                .snippet("Casa mia")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                .position(Boa)
+                .title("Casa del Boa")
+                //.snippet("Pure Melissa Satta sta")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                //mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roma , 15));
         int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -99,14 +110,46 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     }
 
     @Override
-    public boolean onMarkerClick(final Marker marker) {
+    public boolean onMarkerClick(Marker marker) {
+        final String[] db = new String[1];
+        Log.d("OKHTTP3", "Here");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
 
-        if (marker.equals(myMarker))
-        {
-            //MyMarker.addInfoWindow();
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://noiseapp.azurewebsites.net/service/sound/getSensorValues").newBuilder();
+                urlBuilder.addQueryParameter("sensorName", "ArduinoUno");
+                String url = urlBuilder.build().toString();
+
+                Request request = new Request.Builder()
+                        //.url("http://noiseapp.azurewebsites.net/service/sound/getSensorList")
+                        .url(url)
+                        //post()
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    System.out.println(request);
+                    Log.d("OKHTTP3", "Got request");
+                    Log.d("OKHTTP3", response.body().string());
+
+                    //db[0] = new String(response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+
+        if (marker.equals(myMarker)){
+
+            Toast.makeText(getActivity() , db[0], Toast.LENGTH_LONG).show();// display toast
+
             //Intent intent=new Intent(NoiseMap.this, GoogleMap.);
             //startActivity();
         }
         return false;
     }
+
 }
