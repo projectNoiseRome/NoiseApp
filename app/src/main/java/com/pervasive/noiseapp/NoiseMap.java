@@ -1,22 +1,38 @@
 package com.pervasive.noiseapp;
 
+import android.*;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class NoiseMap extends Fragment implements OnMapReadyCallback {
+import java.util.ArrayList;
+
+public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private Marker myMarker;
 
     @Nullable
     @Override
@@ -27,7 +43,6 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         MapFragment fragment = (MapFragment)getChildFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
     }
@@ -47,9 +62,51 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Roma and move the camera
-        LatLng roma = new LatLng(41.9, 12.4833333);
-        mMap.addMarker(new MarkerOptions().position(roma).title("Marker in Roma"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(roma));
+        mMap.setOnMarkerClickListener(this);
+
+        LatLng casa = new LatLng(41.9144113, 12.548262000000022);
+        LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
+
+        myMarker = googleMap.addMarker(new MarkerOptions()
+                .position(casa)
+                .title("Casa")
+                .snippet("Casa mia")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roma , 15));
+        int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        //check permission
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            // Show rationale and request permission.
+            ActivityCompat.requestPermissions(getActivity() ,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION );
+
+        } else {
+            mMap.setMyLocationEnabled(true);
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //this is a little problem but, actually i don't need it
+
+            if( location!=null ){
+                double longitude = location.getLongitude();
+                double latitude = location.getLatitude();
+                LatLng myPos = new LatLng(latitude, longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15));
+            }else Toast.makeText(getActivity(), "Location NULL", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        if (marker.equals(myMarker))
+        {
+            //MyMarker.addInfoWindow();
+            //Intent intent=new Intent(NoiseMap.this, GoogleMap.);
+            //startActivity();
+        }
+        return false;
     }
 }
