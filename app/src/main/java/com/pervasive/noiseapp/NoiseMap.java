@@ -41,8 +41,9 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     private GoogleMap mMap;
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+  
     private Marker myMarker;
-
+  
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 //mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roma , 15));
+
         int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
 
         //check permission
@@ -96,7 +98,9 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         } else {
             mMap.setMyLocationEnabled(true);
+
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             //this is a little problem but, actually i don't need it
 
@@ -107,6 +111,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15));
             }else Toast.makeText(getActivity(), "Location NULL", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     @Override
