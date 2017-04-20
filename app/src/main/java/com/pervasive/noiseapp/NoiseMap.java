@@ -1,6 +1,7 @@
 package com.pervasive.noiseapp;
 
 import android.*;
+import java.util.ArrayList;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -27,8 +28,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,13 +42,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+import static java.lang.Thread.sleep;
 
+public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-  
-    private Marker myMarker;
-  
+
+    public String ris;
+    public ArrayList<MarkerOptions> markersOptList;
+    public String db;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -78,13 +86,6 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         LatLng Boa = new LatLng(41.89186583, 12.5436269);
         LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
 
-        myMarker = googleMap.addMarker(new MarkerOptions()
-                .position(Boa)
-                .title("Casa del Boa")
-                //.snippet("Pure Melissa Satta sta")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                //mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener());
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roma , 15));
 
         int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -98,9 +99,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         } else {
             mMap.setMyLocationEnabled(true);
-
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             //this is a little problem but, actually i don't need it
 
@@ -112,12 +111,65 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             }else Toast.makeText(getActivity(), "Location NULL", Toast.LENGTH_SHORT).show();
         }
 
+        /*Log.d("OKHTTP3", "Here");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //String db;
+                OkHttpClient client = new OkHttpClient();
+
+                Request request = new Request.Builder()
+                        .url("http://noiseapp.azurewebsites.net/service/sound/getSensorList")
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+                    Log.d("OKHTTP3", "Got request");
+                    ris = response.body().string();
+                    Log.d("OKHTTP3", ris);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+        try {
+            JSONArray jsonarray = new JSONArray(ris);
+            markersOptList = new ArrayList<>();
+            for (int i = 0; i < jsonarray.length(); i++) {
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                double latitude = Double.parseDouble( jsonobject.getString("latitude") );
+                double longitude = Double.parseDouble( jsonobject.getString("longitude") );
+                String sensorName = (jsonobject.getString("sensorName")).toString();
+                MarkerOptions myMarker = new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title(sensorName)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                markersOptList.add(myMarker);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Iterator x = markersOptList.iterator();
+        while (x.hasNext()){
+            MarkerOptions aux = (MarkerOptions) x.next();
+            googleMap.addMarker(aux);
+        }*/
+
+        Marker myMarker = googleMap.addMarker(new MarkerOptions()
+                .position(roma)
+                .title("Casa del Boa Arduino")
+                //.snippet("Casa")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        final String[] db = new String[1];
         Log.d("OKHTTP3", "Here");
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -134,27 +186,38 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
-                    System.out.println(request);
                     Log.d("OKHTTP3", "Got request");
-                    Log.d("OKHTTP3", response.body().string());
-
-                    //db[0] = new String(response.body().string());
+                    ris = response.body().string();
+                    Log.d("OKHTTP3", ris);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
 
-
-
-        if (marker.equals(myMarker)){
-
-            Toast.makeText(getActivity() , db[0], Toast.LENGTH_LONG).show();// display toast
-
-            //Intent intent=new Intent(NoiseMap.this, GoogleMap.);
-            //startActivity();
+        try {
+            sleep(5000);
+            Log.d("OKHTTP3 fuori", ris);
+            //JSONArray jsonarray = new JSONArray(ris);
+            JSONObject jsonobject = new JSONObject(ris);
+            db = jsonobject.getString("noiseLevel");//error
+            Log.d("OKHTTP3 db", "" + db);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("EXCEPTION = ", " " + e.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+        //if (marker.equals(myMarker)){
+
+        Toast.makeText(getActivity() , "Noise Level: " + 39.7 , Toast.LENGTH_LONG).show();// display toast
+
+        //Intent intent=new Intent(NoiseMap.this, GoogleMap.);
+        //startActivity();
+        //}
         return false;
     }
 
 }
+
