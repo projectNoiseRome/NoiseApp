@@ -1,72 +1,33 @@
 {
   "project_info": {
-    "project_number": "763933692340",
-    "project_id": "noiseapp-6801c"
+    "project_number": "475472439934",
+    "project_id": "noiseapp-bf97b"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:763933692340:android:b8229d0f9528c72a",
-        "android_client_info": {
-          "package_name": "com.noiseapp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "763933692340-8hctoq5er2h8tuv22dkftk5ii5pejpvb.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.noiseapp",
-            "certificate_hash": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
-          }
-        },
-        {
-          "client_id": "763933692340-j5dhin4aj7aqt91v5igb28r36e072itf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAaJyBwhKwrw0OYY2RHPHxl34X0lRuccrk"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 1
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:763933692340:android:89a2908ae71f46be",
+        "mobilesdk_app_id": "1:475472439934:android:89a2908ae71f46be",
         "android_client_info": {
           "package_name": "com.pervasive.noiseapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "763933692340-dvpv3cac98qpiv5t3cto0gu33ketdoqo.apps.googleusercontent.com",
+          "client_id": "475472439934-rd1675e8gqpvukdp8kt7m3r3mdfp41bp.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "475472439934-je2o7unn9fpnjm8o41as9jditubr5orj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pervasive.noiseapp",
-            "certificate_hash": "469fc418d70738752f8196056aaca0cce21a97d9"
+            "certificate_hash": "ba8dc8fd955458cf71e52ae77420b2d355b07568"
           }
-        },
-        {
-          "client_id": "763933692340-j5dhin4aj7aqt91v5igb28r36e072itf.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAaJyBwhKwrw0OYY2RHPHxl34X0lRuccrk"
+          "current_key": "AIzaSyDB9vMr9RNc1HKEV8p5IF8tW3vlX2IVje4"
         }
       ],
       "services": {

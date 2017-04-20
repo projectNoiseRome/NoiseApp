@@ -2,12 +2,15 @@ package com.pervasive.noiseapp;
 
 import android.*;
 import java.util.ArrayList;
+
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -86,7 +89,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         LatLng Boa = new LatLng(41.89186583, 12.5436269);
         LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roma , 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Boa , 15));
 
         int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -108,7 +111,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 double latitude = location.getLatitude();
                 LatLng myPos = new LatLng(latitude, longitude);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15));
-            }else Toast.makeText(getActivity(), "Location NULL", Toast.LENGTH_SHORT).show();
+            }
         }
 
         /*Log.d("OKHTTP3", "Here");
@@ -159,7 +162,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         }*/
 
         Marker myMarker = googleMap.addMarker(new MarkerOptions()
-                .position(roma)
+                .position(Boa)
                 .title("Casa del Boa Arduino")
                 //.snippet("Casa")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
@@ -168,54 +171,8 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d("OKHTTP3", "Here");
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://noiseapp.azurewebsites.net/service/sound/getSensorValues").newBuilder();
-                urlBuilder.addQueryParameter("sensorName", "ArduinoUno");
-                String url = urlBuilder.build().toString();
-
-                Request request = new Request.Builder()
-                        //.url("http://noiseapp.azurewebsites.net/service/sound/getSensorList")
-                        .url(url)
-                        //post()
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    Log.d("OKHTTP3", "Got request");
-                    ris = response.body().string();
-                    Log.d("OKHTTP3", ris);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-        try {
-            sleep(5000);
-            Log.d("OKHTTP3 fuori", ris);
-            //JSONArray jsonarray = new JSONArray(ris);
-            JSONObject jsonobject = new JSONObject(ris);
-            db = jsonobject.getString("noiseLevel");//error
-            Log.d("OKHTTP3 db", "" + db);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("EXCEPTION = ", " " + e.toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //if (marker.equals(myMarker)){
-
-        Toast.makeText(getActivity() , "Noise Level: " + 39.7 , Toast.LENGTH_LONG).show();// display toast
-
-        //Intent intent=new Intent(NoiseMap.this, GoogleMap.);
-        //startActivity();
-        //}
+        HttpCall call = new HttpCall(this.getContext());
+        call.makeCall();
         return false;
     }
 
