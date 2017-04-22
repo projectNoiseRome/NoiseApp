@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,10 +51,12 @@ import static java.lang.Thread.sleep;
 public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private JSONObject sensorList = new JSONObject();
+    private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
+    private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
+    private HttpCall call = new HttpCall();
 
-    public String ris;
-    public ArrayList<MarkerOptions> markersOptList;
-    public String db;
 
     @Nullable
     @Override
@@ -82,10 +85,17 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         mMap.setOnMarkerClickListener(this);
+        //Now we got our sensor - WAIT FOR THE RESULT
+        getSensorList task = new getSensorList();
+        try {
+            String result = task.execute("").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         //Decimal Degrees = degrees + (minutes/60) + (seconds/3600)
-        LatLng Mni = new LatLng(41.9144113, 12.548262000000022);
         LatLng Boa = new LatLng(41.89186583, 12.5436269);
         LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
 
@@ -114,66 +124,106 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             }
         }
 
-        /*Log.d("OKHTTP3", "Here");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //String db;
-                OkHttpClient client = new OkHttpClient();
+        try {
+            JSONArray list = sensorList.getJSONArray("sensors");
+            for(int i = 0; i < list.length(); i++){
+                JSONObject marker = list.getJSONObject(i);
+                LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
+                double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
+                if(noiseLevel < 40){
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("sensorName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    mMap.addMarker(m);
 
-                Request request = new Request.Builder()
-                        .url("http://noiseapp.azurewebsites.net/service/sound/getSensorList")
-                        .build();
+                }
+                else if(noiseLevel >= 40 && noiseLevel < 60){
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("sensorName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                    mMap.addMarker(m);
 
-                try {
-                    Response response = client.newCall(request).execute();
-                    Log.d("OKHTTP3", "Got request");
-                    ris = response.body().string();
-                    Log.d("OKHTTP3", ris);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                }
+                else{
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("sensorName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    mMap.addMarker(m);
+
                 }
             }
-        }).start();
-
-
-        try {
-            JSONArray jsonarray = new JSONArray(ris);
-            markersOptList = new ArrayList<>();
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonobject = jsonarray.getJSONObject(i);
-
-                double latitude = Double.parseDouble( jsonobject.getString("latitude") );
-                double longitude = Double.parseDouble( jsonobject.getString("longitude") );
-                String sensorName = (jsonobject.getString("sensorName")).toString();
-                MarkerOptions myMarker = new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(sensorName)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                markersOptList.add(myMarker);
-            }
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            Toast.makeText(this.getContext(), e.toString(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-        Iterator x = markersOptList.iterator();
-        while (x.hasNext()){
-            MarkerOptions aux = (MarkerOptions) x.next();
-            googleMap.addMarker(aux);
-        }*/
-
-        Marker myMarker = googleMap.addMarker(new MarkerOptions()
-                .position(Boa)
-                .title("Casa del Boa Arduino")
-                //.snippet("Casa")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d("OKHTTP3", "Here");
-        HttpCall call = new HttpCall(this.getContext());
+        call.setContext(this.getContext());
+        call.setQuery(SENSOR_VALUES);
+        LatLng pos = marker.getPosition();
+        String sensor = "";
+        try {
+            JSONArray list = sensorList.getJSONArray("sensors");
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject mark = list.getJSONObject(i);
+                LatLng posMarker = new LatLng(Double.parseDouble(mark.getString("latitude")), Double.parseDouble(mark.getString("longitude")));
+                if(pos.equals(posMarker)){
+                    sensor = mark.getString("sensorName");
+                }
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        call.setSensorName(sensor);
         call.makeCall();
         return false;
+    }
+
+    //Generic HTTPCall
+    private void makeHttpCall(String query, String sensorName){
+        call.setContext(this.getContext());
+        call.setQuery(query);
+        call.setSensorName(sensorName);
+        call.makeCall();
+    }
+
+    //Get the sensors
+    private class getSensorList extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            // we use the OkHttp library from https://github.com/square/okhttp
+            OkHttpClient client = new OkHttpClient();
+            JSONObject json = new JSONObject();
+            JSONArray list = new JSONArray();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(SENSOR_LIST).newBuilder();
+            String url = urlBuilder.build().toString();
+            Request request = new Request.Builder().url(url).build();
+            try {
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    try {
+                        String result = response.body().string();
+                        json = new JSONObject(result);
+                            sensorList = json;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return sensorList.toString();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "Download failed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
+        }
     }
 
 }
