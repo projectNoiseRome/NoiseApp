@@ -31,6 +31,7 @@ public class HttpCall extends Activity{
 
     //ALL HTTP CALL POSSIBLE
     private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
     private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
 
 
@@ -68,20 +69,20 @@ public class HttpCall extends Activity{
             JSONArray list = new JSONArray();
             HttpUrl.Builder urlBuilder = HttpUrl.parse(query).newBuilder();
             //WE PASS THE SENSOR NAME AS QUERY PARAM
-            if(query.equals(SENSOR_VALUES)){
+            if(query.equals(SENSOR_VALUES) || query.equals(SENSOR_STATS)){
                 urlBuilder.addQueryParameter("sensorName", sensorName);
             }
             String url = urlBuilder.build().toString();
             Request request = new Request.Builder().url(url).build();
             try {
                 Response response = client.newCall(request).execute();
-                String sensor = "";
-                String latitude = "";
-                String longitude = "";
+                String sensorName = "";
+                String max = "";
+                String min = "";
+                String avg = "";
                 String noiseLevel = "";
                 String date = "";
-
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && query.equals(SENSOR_VALUES)) {
                     try {
                         String result = response.body().string();
                         json = new JSONObject(result);
@@ -89,7 +90,7 @@ public class HttpCall extends Activity{
                         //Cycle for exploring the array
                         for (int i = 0; i < list.length(); i++) {
                             JSONObject explrObject = list.getJSONObject(i);
-                            noiseLevel = explrObject.getString("noiseLevel");
+                            noiseLevel = explrObject.getString("noiseLevel").substring(0, 5);
                             date = explrObject.getString("date");
                         }
 
@@ -99,6 +100,22 @@ public class HttpCall extends Activity{
 
                     return "Noise level : "+noiseLevel+"dB, "+date;
 
+                }
+                else if(response.isSuccessful() && query.equals(SENSOR_STATS)){
+
+                    try {
+                        String result = response.body().string();
+                        json = new JSONObject(result);
+                        avg = json.getString("noiseAverage").substring(0, 5);
+                        max = json.getString("maxNoise").substring(0, 5);
+                        min = json.getString("minNoise").substring(0, 5);
+                        sensorName = json.getString("sensorName");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return sensorName + " stats: \n Average : "+avg+ "\n Max : " + max + "\n Min : " + min;
                 }
             } catch (Exception e) {
                 e.printStackTrace();

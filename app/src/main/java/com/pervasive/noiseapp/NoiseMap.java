@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,7 +47,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static java.lang.Thread.sleep;
 
 public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
@@ -54,8 +54,10 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private JSONObject sensorList = new JSONObject();
     private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
     private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
     private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
     private HttpCall call = new HttpCall();
+    private ProgressDialog mProgressDialog;
 
 
     @Nullable
@@ -89,7 +91,9 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         //Now we got our sensor - WAIT FOR THE RESULT
         getSensorList task = new getSensorList();
         try {
+            showProgressDialog();
             String result = task.execute("").get();
+            hideProgressDialog();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -158,11 +162,12 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         }
     }
 
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d("OKHTTP3", "Here");
         call.setContext(this.getContext());
-        call.setQuery(SENSOR_VALUES);
+        call.setQuery(SENSOR_STATS);
         LatLng pos = marker.getPosition();
         String sensor = "";
         try {
@@ -212,7 +217,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    return sensorList.toString();
+                    return "Loaded all the sensors on the map";
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -223,6 +228,21 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this.getContext());
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
         }
     }
 
