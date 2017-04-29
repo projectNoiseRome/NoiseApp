@@ -35,13 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -231,6 +225,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         }
     }
 
+    //Loading widget
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this.getContext());
@@ -240,6 +235,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mProgressDialog.show();
     }
 
+    //Loading widget
     private void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.hide();
