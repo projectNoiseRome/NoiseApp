@@ -1,6 +1,8 @@
 package com.pervasive.noiseapp;
 
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,9 +83,6 @@ public class Stats extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-
-
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
         // array as a third parameter.
@@ -91,6 +91,17 @@ public class Stats extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                // Launch the correct Activity here
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     //Get the sensors
     private class getSensorList extends AsyncTask<String, Void, String> {
