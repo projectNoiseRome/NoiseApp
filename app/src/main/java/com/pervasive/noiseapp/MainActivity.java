@@ -1,6 +1,7 @@
 package com.pervasive.noiseapp;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -100,7 +101,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             fm.beginTransaction().replace(R.id.content_frame, new CalculateNoise()).commit();
         } else if (id == R.id.nav_slideshow) {
-            fm.beginTransaction().replace(R.id.content_frame, new Stats()).commit();
+            Intent intent = new Intent(this  ,Stats.class);
+            startActivity(intent);
         }else if (id == R.id.nav_manage) {
             fm.beginTransaction().replace(R.id.content_frame, new Settings()).commit();
         /*} else if (id == R.id.nav_share) {

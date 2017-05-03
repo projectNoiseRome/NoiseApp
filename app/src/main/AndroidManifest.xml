@@ -9,7 +9,7 @@
      Google Maps Android API v2, but you must specify either coarse or fine
      location permissions for the 'MyLocation' functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -24,16 +24,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:label="MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--  <intent-filter>
+
+            <!--
+              <intent-filter>
                   <action android:name="android.intent.action.MAIN" />
 
                   <category android:name="android.intent.category.LAUNCHER" />
-              </intent-filter> -->
+              </intent-filter>
+            -->
         </activity>
 
         <!--
@@ -57,7 +59,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".Stats"
+            android:label="@string/title_activity_stats"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pervasive.noiseapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
