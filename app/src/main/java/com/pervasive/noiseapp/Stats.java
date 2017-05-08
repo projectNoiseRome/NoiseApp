@@ -87,7 +87,6 @@ public class Stats extends AppCompatActivity {
             images = new int[list.length()];
             for(int i = 0; i < list.length(); i++){
                 JSONObject sensor = list.getJSONObject(i);
-                //LatLng pos = new LatLng(Double.parseDouble(sensor.getString("latitude")), Double.parseDouble(sensor.getString("longitude")));
                 String name = sensor.getString("sensorName");
                 String latitude = sensor.getString("latitude");
                 String longitude = sensor.getString("longitude");
@@ -149,7 +148,7 @@ public class Stats extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    return "Loaded all the sensors on the map";
+                    return "Loaded all the sensors";
                 }
             } catch (Exception e) {
                 e.printStackTrace();
