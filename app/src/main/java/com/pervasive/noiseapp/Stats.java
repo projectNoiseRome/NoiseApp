@@ -11,6 +11,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,11 @@ public class Stats extends AppCompatActivity {
     private JSONObject sensorList = new JSONObject();
     private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
     private ProgressDialog mProgressDialog;
+    public static int[] prgmImages = {R.drawable.arduino, R.drawable.raspberry};
+    public static String[] prgmNameList = {"ArduinoUno", "Raspberry"};
+    private String[] sensor_name;
+    private String[] sensor_position;
+    private int[] images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,27 +74,45 @@ public class Stats extends AppCompatActivity {
         }
 
         sensorView = (ListView)findViewById(R.id.listView);
-        List<String> sensor_list = new ArrayList<String>();
-        //Add the sensor to the list
+
+        /*
+        We will use a custom listview adapter(CustomAdapter):
+        we have three array, one with the sensor name, one with the sensor position, one with the images
+        */
+
         try {
             JSONArray list = sensorList.getJSONArray("sensors");
+            sensor_name = new String[list.length()];
+            sensor_position = new String[list.length()];
+            images = new int[list.length()];
             for(int i = 0; i < list.length(); i++){
                 JSONObject sensor = list.getJSONObject(i);
-                LatLng pos = new LatLng(Double.parseDouble(sensor.getString("latitude")), Double.parseDouble(sensor.getString("longitude")));
+                //LatLng pos = new LatLng(Double.parseDouble(sensor.getString("latitude")), Double.parseDouble(sensor.getString("longitude")));
                 String name = sensor.getString("sensorName");
-                sensor_list.add(name+", "+ pos.toString());
+                String latitude = sensor.getString("latitude");
+                String longitude = sensor.getString("longitude");
+                sensor_name[i] = name;
+                sensor_position[i] = "Latitude: "+latitude.substring(0, 5)+", Longitude: " + longitude.substring(0, 5);
+                if(name.contains("Arduino")||name.contains("Genuino")){
+                    images[i] = R.drawable.arduino;
+                }
+                else{
+                    images[i] = R.drawable.raspberry;
+                }
             }
         } catch (Exception e) {
             Toast.makeText(Stats.this, e.toString(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+        sensorView.setAdapter(new CustomAdapter(this, sensor_name, sensor_position, images));
 
-        // This is the array adapter, it takes the context of the activity as a
-        // first parameter, the type of list view as a second parameter and your
-        // array as a third parameter.
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, sensor_list);
-        sensorView.setAdapter(arrayAdapter);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
