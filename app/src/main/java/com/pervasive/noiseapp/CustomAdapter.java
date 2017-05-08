@@ -5,6 +5,9 @@ package com.pervasive.noiseapp;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -72,9 +75,14 @@ public class CustomAdapter extends BaseAdapter{
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Toast.makeText(context, "You Clicked "+result[position], Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(v.getContext(), SensorStats.class);
+                intent.putExtra("sensorName", result[position]);
+                context.startActivity(intent);
             }
         });
         return rowView;
     }
 
 }
+
+

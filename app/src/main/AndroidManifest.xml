@@ -68,6 +68,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pervasive.noiseapp.MainActivity" />
         </activity>
+        <activity
+            android:name=".SensorStats"
+            android:label="@string/title_activity_sensor_stats"
+            android:parentActivityName=".Stats"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pervasive.noiseapp.Stats" />
+        </activity>
     </application>
 
 </manifest>
