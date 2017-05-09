@@ -106,9 +106,9 @@ public class HttpCall extends Activity{
                     try {
                         String result = response.body().string();
                         json = new JSONObject(result);
-                        avg = json.getString("noiseAverage").substring(0, 5);
-                        max = json.getString("maxNoise").substring(0, 5);
-                        min = json.getString("minNoise").substring(0, 5);
+                        avg = json.getString("noiseAverage");
+                        max = json.getString("maxNoise");
+                        min = json.getString("minNoise");
                         sensorName = json.getString("sensorName");
 
                     } catch (JSONException e) {
