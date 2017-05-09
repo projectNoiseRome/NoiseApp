@@ -72,7 +72,7 @@ public class Stats extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
+        mProgressDialog.dismiss();
         sensorView = (ListView)findViewById(R.id.listView);
 
         /*
