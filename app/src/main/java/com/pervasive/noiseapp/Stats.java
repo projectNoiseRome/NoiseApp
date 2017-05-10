@@ -92,8 +92,11 @@ public class Stats extends AppCompatActivity {
                 String longitude = sensor.getString("longitude");
                 sensor_name[i] = name;
                 sensor_position[i] = "Latitude: "+latitude.substring(0, 5)+", Longitude: " + longitude.substring(0, 5);
-                if(name.contains("Arduino")||name.contains("Genuino")){
+                if(name.contains("Arduino")){
                     images[i] = R.drawable.arduino;
+                }
+                else if(name.contains("Genuino")){
+                    images[i] = R.drawable.genuino;
                 }
                 else{
                     images[i] = R.drawable.raspberry;
