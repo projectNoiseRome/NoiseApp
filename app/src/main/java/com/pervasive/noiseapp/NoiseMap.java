@@ -54,7 +54,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
     private final String TRAFFIC = "traffic";
     private final String CROWD = "crowd";
-    private final String ENTERTEINMENT = "enterteinment";
+    private final String ENTERTAINMENT = "entertainment";
     private HttpCall call = new HttpCall();
     private ProgressDialog mProgressDialog;
 
@@ -63,11 +63,18 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_noise_map, container, false);
+
+
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Now we got our sensor - WAIT FOR THE RESULT
+        getSensorList taskSensor = new getSensorList(SENSOR_LIST, this.getContext());
+        getSensorList taskUser = new getSensorList(USER_LIST, this.getContext());
+        taskSensor.execute("");
+        taskUser.execute("");
         MapFragment fragment = (MapFragment)getChildFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
     }
@@ -87,24 +94,10 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-        //Now we got our sensor - WAIT FOR THE RESULT
-        getSensorList taskSensor = new getSensorList(SENSOR_LIST);
-        getSensorList taskUser = new getSensorList(USER_LIST);
-        try {
-            showProgressDialog();
-            String result = taskSensor.execute("").get();
-            String user = taskUser.execute("").get();
-            hideProgressDialog();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
         //Decimal Degrees = degrees + (minutes/60) + (seconds/3600)
-        LatLng Boa = new LatLng(41.89186583, 12.5436269);
-        LatLng roma = new LatLng(41.90278349999999, 12.496365500000024);
+        LatLng Rome = new LatLng(41.8902102, 12.492230899999981);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Boa , 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Rome , 15));
 
         int locationPermission = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -160,22 +153,21 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             }
             //FOR THE USER RILEVATION
             JSONArray userlist = userList.getJSONArray("userData");
-            for(int i = 0; i < list.length(); i++){
+            for(int i = 0; i < userlist.length(); i++){
                 JSONObject marker = userlist.getJSONObject(i);
                 LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
-                double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
                 String noiseType = marker.getString("noiseType");
                 if(noiseType.equals(TRAFFIC)){
                     MarkerOptions m = new MarkerOptions().position(pos)
                             .title(marker.getString("userName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
                     mMap.addMarker(m);
 
                 }
                 else if(noiseType.equals(CROWD)){
                     MarkerOptions m = new MarkerOptions().position(pos)
                             .title(marker.getString("userName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     mMap.addMarker(m);
 
                 }
@@ -239,9 +231,21 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private class getSensorList extends AsyncTask<String, Void, String> {
 
         private String httpString = "";
+        private ProgressDialog pd;
+        private Context context;
 
-        public getSensorList(String httpString){
+
+        public getSensorList(String httpString, Context context){
             this.httpString = httpString;
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pd = new ProgressDialog(context);
+            pd.setMessage("loading");
+            pd.setIndeterminate(true);
+            pd.show();
         }
 
         @Override
@@ -292,24 +296,11 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         @Override
         protected void onPostExecute(String result) {
+            if (pd != null)
+            {
+                pd.dismiss();
+            }
             Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    //Loading widget
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this.getContext());
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-        mProgressDialog.show();
-    }
-
-    //Loading widget
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
         }
     }
 

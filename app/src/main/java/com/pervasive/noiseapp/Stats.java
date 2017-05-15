@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
@@ -62,53 +64,17 @@ public class Stats extends AppCompatActivity {
 
         //GET THE SENSOR LIST
         //Now we got our sensor - WAIT FOR THE RESULT
-        getSensorList task = new getSensorList();
-        try {
-            showProgressDialog();
-            String result = task.execute("").get();
-            hideProgressDialog();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        mProgressDialog.dismiss();
+
         sensorView = (ListView)findViewById(R.id.listView);
+        getSensorList task = new getSensorList(this);
+        task.execute("");
 
-        /*
-        We will use a custom listview adapter(CustomAdapter):
-        we have three array, one with the sensor name, one with the sensor position, one with the images
-        */
 
-        try {
-            JSONArray list = sensorList.getJSONArray("sensors");
-            sensor_name = new String[list.length()];
-            sensor_position = new String[list.length()];
-            images = new int[list.length()];
-            for(int i = 0; i < list.length(); i++){
-                JSONObject sensor = list.getJSONObject(i);
-                String name = sensor.getString("sensorName");
-                String latitude = sensor.getString("latitude");
-                String longitude = sensor.getString("longitude");
-                sensor_name[i] = name;
-                sensor_position[i] = "Latitude: "+latitude.substring(0, 5)+", Longitude: " + longitude.substring(0, 5);
-                if(name.contains("Arduino")){
-                    images[i] = R.drawable.arduino;
-                }
-                else if(name.contains("Genuino")){
-                    images[i] = R.drawable.genuino;
-                }
-                else{
-                    images[i] = R.drawable.raspberry;
-                }
-            }
-        } catch (Exception e) {
-            Toast.makeText(Stats.this, e.toString(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-        sensorView.setAdapter(new CustomAdapter(this, sensor_name, sensor_position, images));
+
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,12 +97,23 @@ public class Stats extends AppCompatActivity {
 
     //Get the sensors
     private class getSensorList extends AsyncTask<String, Void, String> {
+
+        private Stats stats;
+
+        public getSensorList(Stats stast){
+            this.stats = stast;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog();
+        }
+
         @Override
         protected String doInBackground(String... urls) {
             // we use the OkHttp library from https://github.com/square/okhttp
             OkHttpClient client = new OkHttpClient();
             JSONObject json = new JSONObject();
-            JSONArray list = new JSONArray();
             HttpUrl.Builder urlBuilder = HttpUrl.parse(SENSOR_LIST).newBuilder();
             String url = urlBuilder.build().toString();
             Request request = new Request.Builder().url(url).build();
@@ -151,6 +128,37 @@ public class Stats extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    /*
+                        We will use a custom listview adapter(CustomAdapter):
+                        we have three array, one with the sensor name, one with the sensor position, one with the images
+                    */
+
+                    try {
+                        JSONArray list = sensorList.getJSONArray("sensors");
+                        sensor_name = new String[list.length()];
+                        sensor_position = new String[list.length()];
+                        images = new int[list.length()];
+                        for(int i = 0; i < list.length(); i++){
+                            JSONObject sensor = list.getJSONObject(i);
+                            String name = sensor.getString("sensorName");
+                            String latitude = sensor.getString("latitude");
+                            String longitude = sensor.getString("longitude");
+                            sensor_name[i] = name;
+                            sensor_position[i] = "Latitude: "+latitude.substring(0, 5)+", Longitude: " + longitude.substring(0, 5);
+                            if(name.contains("Arduino")){
+                                images[i] = R.drawable.arduino;
+                            }
+                            else if(name.contains("Genuino")){
+                                images[i] = R.drawable.genuino;
+                            }
+                            else{
+                                images[i] = R.drawable.raspberry;
+                            }
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(Stats.this, e.toString(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                     return "Loaded all the sensors";
                 }
             } catch (Exception e) {
@@ -161,6 +169,8 @@ public class Stats extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            hideProgressDialog();
+            sensorView.setAdapter(new CustomAdapter(stats, sensor_name, sensor_position, images));
             Toast.makeText(Stats.this, result, Toast.LENGTH_LONG).show();
         }
     }

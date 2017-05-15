@@ -95,8 +95,6 @@ public class SensorStats extends AppCompatActivity {
         for(int i = 0; i < xValue.length; i++){
             xEntrys.add(xValue[i]);
         }
-        hideProgressDialog();
-        mProgressDialog.dismiss();
         //Create dataSet
         PieDataSet pieDataSet = new PieDataSet(yEntrys, "S, M, T, W, T, F, S");
         pieDataSet.setSliceSpace(2);
