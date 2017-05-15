@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             fm.beginTransaction().replace(R.id.content_frame, new NoiseMap()).commit();
         } else if (id == R.id.nav_gallery) {
-            fm.beginTransaction().replace(R.id.content_frame, new CalculateNoise()).commit();
+            Intent intent = new Intent(this  ,CalculateNoise.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
             Intent intent = new Intent(this  ,Stats.class);
             startActivity(intent);
