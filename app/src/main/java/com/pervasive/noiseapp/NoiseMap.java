@@ -235,14 +235,6 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         return false;
     }
 
-    //Generic HTTPCall
-    private void makeHttpCall(String query, String sensorName){
-        call.setContext(this.getContext());
-        call.setQuery(query);
-        call.setSensorName(sensorName);
-        call.makeCall();
-    }
-
     //Get the sensors
     private class getSensorList extends AsyncTask<String, Void, String> {
 
