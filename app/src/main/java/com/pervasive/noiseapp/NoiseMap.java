@@ -46,10 +46,15 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private GoogleMap mMap;
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private JSONObject sensorList = new JSONObject();
+    private JSONObject userList = new JSONObject();
     private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
-    private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
+    //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
     private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
-    private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
+    //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
+    private final String TRAFFIC = "traffic";
+    private final String CROWD = "crowd";
+    private final String ENTERTEINMENT = "enterteinment";
     private HttpCall call = new HttpCall();
     private ProgressDialog mProgressDialog;
 
@@ -83,10 +88,12 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
         //Now we got our sensor - WAIT FOR THE RESULT
-        getSensorList task = new getSensorList();
+        getSensorList taskSensor = new getSensorList(SENSOR_LIST);
+        getSensorList taskUser = new getSensorList(USER_LIST);
         try {
             showProgressDialog();
-            String result = task.execute("").get();
+            String result = taskSensor.execute("").get();
+            String user = taskUser.execute("").get();
             hideProgressDialog();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -123,6 +130,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         }
 
         try {
+            //FOR THE STATIC SENSOR
             JSONArray list = sensorList.getJSONArray("sensors");
             for(int i = 0; i < list.length(); i++){
                 JSONObject marker = list.getJSONObject(i);
@@ -150,6 +158,35 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
                 }
             }
+            //FOR THE USER RILEVATION
+            JSONArray userlist = userList.getJSONArray("userData");
+            for(int i = 0; i < list.length(); i++){
+                JSONObject marker = userlist.getJSONObject(i);
+                LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
+                double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
+                String noiseType = marker.getString("noiseType");
+                if(noiseType.equals(TRAFFIC)){
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("userName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    mMap.addMarker(m);
+
+                }
+                else if(noiseType.equals(CROWD)){
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("userName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                    mMap.addMarker(m);
+
+                }
+                else{
+                    MarkerOptions m = new MarkerOptions().position(pos)
+                            .title(marker.getString("userName"))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                    mMap.addMarker(m);
+
+                }
+            }
         } catch (Exception e) {
             Toast.makeText(this.getContext(), e.toString(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -171,13 +208,30 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 LatLng posMarker = new LatLng(Double.parseDouble(mark.getString("latitude")), Double.parseDouble(mark.getString("longitude")));
                 if(pos.equals(posMarker)){
                     sensor = mark.getString("sensorName");
+                    break;
                 }
+            }
+
+            if(!sensor.equals("")) {
+                call.setSensorName(sensor);
+                call.makeCall();
+            }
+            else {
+                JSONArray listuser = userList.getJSONArray("userData");
+                JSONObject obj = new JSONObject();
+                for (int i = 0; i < list.length(); i++) {
+                    JSONObject mark = listuser.getJSONObject(i);
+                    LatLng posMarker = new LatLng(Double.parseDouble(mark.getString("latitude")), Double.parseDouble(mark.getString("longitude")));
+                    if (pos.equals(posMarker)) {
+                        obj = mark;
+                        break;
+                    }
+                }
+                Toast.makeText(this.getContext(), obj.getString("userName")+": \n Noise Value : " + obj.getString("noiseLevel"), Toast.LENGTH_LONG).show();
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
-        call.setSensorName(sensor);
-        call.makeCall();
         return false;
     }
 
@@ -191,13 +245,20 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
     //Get the sensors
     private class getSensorList extends AsyncTask<String, Void, String> {
+
+        private String httpString = "";
+
+        public getSensorList(String httpString){
+            this.httpString = httpString;
+        }
+
         @Override
         protected String doInBackground(String... urls) {
             // we use the OkHttp library from https://github.com/square/okhttp
             OkHttpClient client = new OkHttpClient();
             JSONObject json = new JSONObject();
             JSONArray list = new JSONArray();
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(SENSOR_LIST).newBuilder();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(httpString).newBuilder();
             String url = urlBuilder.build().toString();
             Request request = new Request.Builder().url(url).build();
             try {
@@ -207,16 +268,34 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                     try {
                         String result = response.body().string();
                         json = new JSONObject(result);
+                        if(httpString.equals(SENSOR_LIST)){
                             sensorList = json;
+                        }
+                        else {
+                            userList = json;
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    return "Loaded all the sensors on the map";
+                    if(httpString.equals(SENSOR_LIST)) {
+                        return "Loaded all the sensors on the map";
+                    }
+                    else {
+                        return "Loaded all the user data";
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "Download failed";
+
+            if(httpString.equals(SENSOR_LIST)) {
+                return "Failed to load the sensors on the map";
+            }
+            else {
+                return "Failed to load the user data";
+            }
         }
 
         @Override

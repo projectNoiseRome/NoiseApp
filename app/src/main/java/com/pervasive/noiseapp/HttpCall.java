@@ -80,6 +80,7 @@ public class HttpCall extends Activity{
                 String max = "";
                 String min = "";
                 String avg = "";
+                String last = "";
                 String noiseLevel = "";
                 String date = "";
                 if (response.isSuccessful() && query.equals(SENSOR_VALUES)) {
@@ -109,13 +110,14 @@ public class HttpCall extends Activity{
                         avg = json.getString("noiseAverage");
                         max = json.getString("maxNoise");
                         min = json.getString("minNoise");
+                        last = json.getString("lastNoise");
                         sensorName = json.getString("sensorName");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    return sensorName + " stats: \n Average : "+avg+ "\n Max : " + max + "\n Min : " + min;
+                    return sensorName + " data: \n Last rilevation : " + last + " \n Average : "+avg+ "\n Max : " + max + "\n Min : " + min;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
