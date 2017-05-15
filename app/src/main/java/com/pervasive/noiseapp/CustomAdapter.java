@@ -6,8 +6,6 @@ package com.pervasive.noiseapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;

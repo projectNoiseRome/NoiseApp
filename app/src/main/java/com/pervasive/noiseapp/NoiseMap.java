@@ -1,13 +1,9 @@
 package com.pervasive.noiseapp;
 
-import android.*;
-import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -26,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -35,7 +30,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.concurrent.ExecutionException;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,9 +48,8 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
     private final String TRAFFIC = "traffic";
     private final String CROWD = "crowd";
-    private final String ENTERTAINMENT = "entertainment";
+    //private final String ENTERTAINMENT = "entertainment";
     private HttpCall call = new HttpCall();
-    private ProgressDialog mProgressDialog;
 
 
     @Nullable
@@ -252,8 +245,6 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         protected String doInBackground(String... urls) {
             // we use the OkHttp library from https://github.com/square/okhttp
             OkHttpClient client = new OkHttpClient();
-            JSONObject json = new JSONObject();
-            JSONArray list = new JSONArray();
             HttpUrl.Builder urlBuilder = HttpUrl.parse(httpString).newBuilder();
             String url = urlBuilder.build().toString();
             Request request = new Request.Builder().url(url).build();
@@ -263,7 +254,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                 if (response.isSuccessful()) {
                     try {
                         String result = response.body().string();
-                        json = new JSONObject(result);
+                        JSONObject json = new JSONObject(result);
                         if(httpString.equals(SENSOR_LIST)){
                             sensorList = json;
                         }
