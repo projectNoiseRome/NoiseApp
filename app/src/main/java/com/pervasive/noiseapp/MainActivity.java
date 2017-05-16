@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity
             fm.beginTransaction().replace(R.id.content_frame, new NoiseMap()).commit();
         } else if (id == R.id.nav_gallery) {
             Intent intent = new Intent(this  ,CalculateNoise.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
             Intent intent = new Intent(this  ,Stats.class);

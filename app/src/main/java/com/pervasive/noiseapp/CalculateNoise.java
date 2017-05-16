@@ -37,6 +37,7 @@ public class CalculateNoise extends AppCompatActivity {
     private Button startRecording = null;
     private Button stopRecording = null;
     AudioRecord recorder = null;
+    private String email ="";
     private static final String TAG = "SoundRecordingDemo";
 
     /** Called when the activity is first created. */
@@ -44,7 +45,7 @@ public class CalculateNoise extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_calculate_noise);
-
+        email = getIntent().getExtras().getString("email");
 
         //check permission
         if (ContextCompat.checkSelfPermission(this,
