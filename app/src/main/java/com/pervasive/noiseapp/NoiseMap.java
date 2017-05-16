@@ -63,7 +63,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Now we got our sensor - WAIT FOR THE RESULT
+        //Taking the static sensor data and the user data
         getSensorList taskSensor = new getSensorList(SENSOR_LIST, this.getContext());
         getSensorList taskUser = new getSensorList(USER_LIST, this.getContext());
         taskSensor.execute("");

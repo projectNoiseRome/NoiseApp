@@ -39,6 +39,7 @@ public class SensorStats extends AppCompatActivity {
     private PieChart pieChart;
     private String[] xValue = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     private float[]  yValue = new float[7];
+    private SensorStats context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class SensorStats extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         sensorName = intent.getStringExtra("sensorName");
+        context = this;
 
 
         //CREATE THE CHART
@@ -77,7 +79,6 @@ public class SensorStats extends AppCompatActivity {
     private void addDataSet() throws JSONException, ExecutionException, InterruptedException {
         final ArrayList<PieEntry> yEntrys = new ArrayList<PieEntry>();
         ArrayList<String> xEntrys = new ArrayList<String>();
-        showProgressDialog();
         for (int i = 0; i < yValue.length; i++) {
             GetSensorValues task = new GetSensorValues(0);
             task.setDay(i);
@@ -135,6 +136,9 @@ public class SensorStats extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(SensorStats.this, xValue[index], Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, DayStats.class);
+                //intent.putExtra("sensorName", result[position]);
+                startActivity(intent);
             }
 
             @Override
@@ -176,6 +180,11 @@ public class SensorStats extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute(){
+            showProgressDialog();
+        }
+
+        @Override
         protected String doInBackground(String... urls) {
             // we use the OkHttp library from https://github.com/square/okhttp
             OkHttpClient client = new OkHttpClient();
@@ -207,6 +216,7 @@ public class SensorStats extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             //Toast.makeText(SensorStats.this, result, Toast.LENGTH_LONG).show();
+            hideProgressDialog();
         }
     }
 

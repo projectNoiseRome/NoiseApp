@@ -25,8 +25,6 @@ public class Stats extends AppCompatActivity {
     private JSONObject sensorList = new JSONObject();
     private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
     private ProgressDialog mProgressDialog;
-    public static int[] prgmImages = {R.drawable.arduino, R.drawable.raspberry};
-    public static String[] prgmNameList = {"ArduinoUno", "Raspberry"};
     private String[] sensor_name;
     private String[] sensor_position;
     private int[] images;

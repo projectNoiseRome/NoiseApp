@@ -51,5 +51,6 @@
     <string name="server_client_id">547537947084-maiu44h20mhs4ulco50m02guc7jme36r.apps.googleusercontent.com</string>
     <string name="title_activity_stats">Stats</string>
     <string name="title_activity_sensor_stats">SensorStats</string>
+    <string name="title_activity_day_stats">DayStats</string>
 
 </resources>
