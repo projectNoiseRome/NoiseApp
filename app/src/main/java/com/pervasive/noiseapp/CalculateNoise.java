@@ -1,41 +1,28 @@
 package com.pervasive.noiseapp;
 
 
-import java.io.File;
-import java.io.IOException;
 
-
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.json.JSONObject;
-
-import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import android.*;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -45,20 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 
 public class CalculateNoise extends AppCompatActivity {
@@ -67,10 +41,12 @@ public class CalculateNoise extends AppCompatActivity {
     public MediaRecorder mrec = null;
     private Button startRecording = null;
     private Button stopRecording = null;
-    AudioRecord recorder = null;
+    private AudioRecord recorder = null;
     private String email ="";
     private String decibels;
     private static final String TAG = "SoundRecordingDemo";
+    private ProgressDialog mProgressDialog;
+    private static final String POST_NOISE = "http://10.0.2.2:8080/NoiseAppServer/service/sound/userNoiseLevel";
 
     /** Called when the activity is first created. */
     @Override
@@ -180,46 +156,64 @@ public class CalculateNoise extends AppCompatActivity {
             }
         }
 
-        final MediaType json = MediaType.parse("application/json; charset = utf = 8");
         final JSONObject actualData = new JSONObject();
         Spinner sp = (Spinner) findViewById(R.id.spinner);
         try {
             actualData.put("userName", email);
-            actualData.put("latitude", latitude);
-            actualData.put("longitude", longitude);
+            actualData.put("latitude", Double.toString(latitude));
+            actualData.put("longitude", Double.toString(longitude));
             Object nt = sp.getSelectedItem();
-            actualData.put("noiseType", nt.toString().toUpperCase());
+            actualData.put("noiseType", nt.toString().toLowerCase());
             actualData.put("noiseValue", decibels);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        SendNoiseLevel snl = new SendNoiseLevel(actualData);
+        snl.execute("");
 
-        AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+    }
 
-            @Override
-            protected String doInBackground(Void... params) {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody formBody = RequestBody.create(json, actualData.toString());
+    //HTTP CALL
+    //Get the sensor's values
+    private class SendNoiseLevel extends AsyncTask<String, Void, String> {
 
-                Request request = new Request.Builder()
-                        .url("http://10.0.2.2:8080/NoiseAppServer/service/sound/sendUserData")
-                        .post(formBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    if (!response.isSuccessful()) {
-                        return null;
-                    }
-                    return response.body().string();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+        private JSONObject body;
+
+        public SendNoiseLevel(JSONObject body){
+            this.body = body;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            showProgressDialog();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            // we use the OkHttp library from https://github.com/square/okhttp
+            OkHttpClient client = new OkHttpClient();
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            RequestBody formBody = RequestBody.create(JSON, body.toString());
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(POST_NOISE).newBuilder();
+            String url = urlBuilder.build().toString();
+            Request request = new Request.Builder().url(url).post(formBody).build();
+            try {
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    return "Success";
                 }
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
+            return "Upload failed";
+        }
 
-
+        @Override
+        protected void onPostExecute(String result) {
+            hideProgressDialog();
+            Toast.makeText(CalculateNoise.this, result, Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -279,5 +273,21 @@ public class CalculateNoise extends AppCompatActivity {
         }
         return db;
 
+    }
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
     }
 }
