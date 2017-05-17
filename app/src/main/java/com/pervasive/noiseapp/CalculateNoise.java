@@ -4,6 +4,19 @@ package com.pervasive.noiseapp;
 import java.io.File;
 import java.io.IOException;
 
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import org.json.JSONObject;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import android.*;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -17,27 +30,46 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 public class CalculateNoise extends AppCompatActivity {
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     static final int MY_PERMISSIONS_REQUEST_ACCESS_RECORD_AUDIO = 1;
     public MediaRecorder mrec = null;
     private Button startRecording = null;
     private Button stopRecording = null;
     AudioRecord recorder = null;
     private String email ="";
+    private String decibels;
     private static final String TAG = "SoundRecordingDemo";
 
     /** Called when the activity is first created. */
@@ -45,6 +77,9 @@ public class CalculateNoise extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_calculate_noise);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         email = getIntent().getExtras().getString("email");
 
         //check permission
@@ -54,7 +89,6 @@ public class CalculateNoise extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.RECORD_AUDIO},
                     MY_PERMISSIONS_REQUEST_ACCESS_RECORD_AUDIO);
-
         }
 
         //mrec = new MediaRecorder();
@@ -62,15 +96,16 @@ public class CalculateNoise extends AppCompatActivity {
         startRecording = (Button)findViewById(R.id.startrecording);
         stopRecording = (Button)findViewById(R.id.stoprecording);
 
-
         startRecording.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 try
                 {
-                    startRecording.setEnabled(false);
+                    //startRecording.setEnabled(false);
                     stopRecording.setEnabled(true);
                     stopRecording.requestFocus();
-                    getNoiseLevel();
+                    decibels = "" + getNoiseLevel();
+                    TextView tv = (TextView)findViewById(R.id.decibelView);
+                    tv.setText(decibels.substring(0,5));
                     //startRecording();
                 }catch (Exception ee)
                 {
@@ -85,7 +120,7 @@ public class CalculateNoise extends AppCompatActivity {
                 startRecording.setEnabled(true);
                 stopRecording.setEnabled(false);
                 startRecording.requestFocus();
-                stopRecording();
+                postNoise();
             }
 
         });
@@ -96,7 +131,7 @@ public class CalculateNoise extends AppCompatActivity {
     }
 
 
-    public void startRecording() throws IOException{
+    /*public void startRecording() throws IOException{
         if (mrec == null) {
             mrec = new MediaRecorder();
             mrec.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -106,26 +141,88 @@ public class CalculateNoise extends AppCompatActivity {
             mrec.prepare();
             mrec.start();
         }
-    }
-
-    protected void stopRecording() {
-        if (mrec != null) {
-            Toast.makeText(getApplicationContext(), "db = " + getNoiseLevel(), Toast.LENGTH_SHORT).show();
-            mrec.stop();
-            //Toast.makeText(getApplicationContext(), "db = " + getAmplitude(), Toast.LENGTH_SHORT).show();
-            mrec.release();
-            //Toast.makeText(getApplicationContext(), "db = " + getAmplitude(), Toast.LENGTH_SHORT).show();
-            mrec = null;
-        }
-    }
-
-    /*public double getAmplitude() {
-        if (mrec != null)
-            return  mrec.getMaxAmplitude();
-        else
-            return 0;
-
     }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                // Launch the correct Activity here
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected void postNoise() {
+        double latitude = 0.0;
+        double longitude = 0.0;
+        int locationPermission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        //check permission
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            // Show rationale and request permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        } else {
+            LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //this is a little problem but, actually i don't need it
+
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                Log.d("long", "" + longitude);
+                Log.d("lat", "" + latitude);
+            }
+        }
+
+        final MediaType json = MediaType.parse("application/json; charset = utf = 8");
+        final JSONObject actualData = new JSONObject();
+        Spinner sp = (Spinner) findViewById(R.id.spinner);
+        try {
+            actualData.put("userName", email);
+            actualData.put("latitude", latitude);
+            actualData.put("longitude", longitude);
+            Object nt = sp.getSelectedItem();
+            actualData.put("noiseType", nt.toString().toUpperCase());
+            actualData.put("noiseValue", decibels);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected String doInBackground(Void... params) {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody formBody = RequestBody.create(json, actualData.toString());
+
+                Request request = new Request.Builder()
+                        .url("http://10.0.2.2:8080/NoiseAppServer/service/sound/sendUserData")
+                        .post(formBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (!response.isSuccessful()) {
+                        return null;
+                    }
+                    return response.body().string();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+            }
+        };
+
+
+    }
+
+
 
     public static double REFERENCE = 0.00002;
 
@@ -171,7 +268,16 @@ public class CalculateNoise extends AppCompatActivity {
         Log.d(TAG, "x="+pressure +" Pa");
         db = (20 * Math.log10(pressure/REFERENCE));
         Log.d(TAG, "db="+db);
-        Toast.makeText(getApplicationContext(), "db = " + db, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "db = " + db, Toast.LENGTH_SHORT).show();
+        if (mrec != null) {
+            //Toast.makeText(getApplicationContext(), "db = " + getNoiseLevel(), Toast.LENGTH_SHORT).show();
+            mrec.stop();
+            //Toast.makeText(getApplicationContext(), "db = " + getAmplitude(), Toast.LENGTH_SHORT).show();
+            mrec.release();
+            //Toast.makeText(getApplicationContext(), "db = " + getAmplitude(), Toast.LENGTH_SHORT).show();
+            mrec = null;
+        }
         return db;
+
     }
 }

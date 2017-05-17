@@ -53,4 +53,10 @@
     <string name="title_activity_sensor_stats">SensorStats</string>
     <string name="title_activity_day_stats">DayStats</string>
 
+    <string-array name="noiseType">
+            <item>Traffic</item>
+        <item>Crowd</item>
+        <item>Entertainment</item>
+    </string-array>
+
 </resources>
