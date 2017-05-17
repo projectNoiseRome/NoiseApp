@@ -3,10 +3,10 @@ An accademic project developed in for the Pervasive System class a Univerity of 
 The goal of the project is to have a noise map of the city, in order to achieve better booking for tourist based on their preferences: for example, young tourist may like to be near a zone with high nightlife activities(so with a higher noise of level) and viceversa a family maybe want to avoid such places. <br />
 
 # Update
-Added the stats activity with chart
+Added the user noise calculation's function
 
 # ToDo
-- Mobile noise's calculation
+- Stats per day
 
 # Already Done
 
@@ -15,6 +15,7 @@ Added the stats activity with chart
 - Drop down menu 
 - Pins with color based on noise level and onClick message response
 - Stats implementation divided by sensor
+- Mobile noise's calculation
 
 # Links
 Server rep: https://github.com/projectNoiseRome/NoiseAppServer
