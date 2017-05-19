@@ -135,8 +135,10 @@ public class SensorStats extends AppCompatActivity {
                         index = i;
                     }
                 }
-                Toast.makeText(SensorStats.this, xValue[index], Toast.LENGTH_LONG).show();
+                //Toast.makeText(SensorStats.this, xValue[index], Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(context, DayStats.class);
+                intent.putExtra("day", xValue[index]);
+                intent.putExtra("sensorName", sensorName);
                 //intent.putExtra("sensorName", result[position]);
                 startActivity(intent);
             }
