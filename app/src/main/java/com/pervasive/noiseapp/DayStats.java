@@ -19,7 +19,10 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
@@ -47,6 +50,8 @@ public class DayStats extends AppCompatActivity {
     private BarData data;
     private BarChart chart;
     private int[] noiseValues;
+    private String[] xValue = {"1-8", "9-14", "15-20", "21-23"};
+    private float[]  yValue = {1, 2, 3, 4};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,6 +262,25 @@ public class DayStats extends AppCompatActivity {
             chart.setDescription(description);
             chart.animateXY(2000, 2000);
             chart.invalidate();
+
+            chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    int index = 0;
+                    Log.d("e.getY() value : ", Float.toString(e.getY()));
+                    for(int i = 0; i < noiseValues.length; i++){
+                        if(e.getY() == noiseValues[i]){
+                            index = i;
+                            break;
+                        }
+                    }
+                    Toast.makeText(DayStats.this, "Time slot : \n"+xValue[index], Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onNothingSelected() {
+                }
+            });
             hideProgressDialog();
         }
     }
