@@ -214,7 +214,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                         break;
                     }
                 }
-                Toast.makeText(this.getContext(), obj.getString("userName")+": \n Noise Value : " + obj.getString("noiseLevel"), Toast.LENGTH_LONG).show();
+                Toast.makeText(this.getContext(), obj.getString("userName")+": \n Noise Value : " + obj.getString("noiseLevel")+": \n Noise Type : " + obj.getString("noiseType"), Toast.LENGTH_LONG).show();
             }
         }catch(JSONException e){
             e.printStackTrace();
