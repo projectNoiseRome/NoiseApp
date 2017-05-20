@@ -63,11 +63,6 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Taking the static sensor data and the user data
-        getSensorList taskSensor = new getSensorList(SENSOR_LIST, this.getContext());
-        getSensorList taskUser = new getSensorList(USER_LIST, this.getContext());
-        taskSensor.execute("");
-        taskUser.execute("");
         MapFragment fragment = (MapFragment)getChildFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
     }
@@ -115,6 +110,12 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             }
         }
 
+        //Taking the static sensor data and the user data
+        getSensorList taskSensor = new getSensorList(SENSOR_LIST, this.getContext());
+        getSensorList taskUser = new getSensorList(USER_LIST, this.getContext());
+        taskSensor.execute("");
+        taskUser.execute("");
+        /*
         try {
             //FOR THE STATIC SENSOR
             JSONArray list = sensorList.getJSONArray("sensors");
@@ -175,7 +176,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         } catch (Exception e) {
             Toast.makeText(this.getContext(), e.toString(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -242,7 +243,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         }
 
         @Override
-        protected String doInBackground(String... urls) {
+        protected String doInBackground(String... urls){
             // we use the OkHttp library from https://github.com/square/okhttp
             OkHttpClient client = new OkHttpClient();
             HttpUrl.Builder urlBuilder = HttpUrl.parse(httpString).newBuilder();
@@ -287,6 +288,72 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
         @Override
         protected void onPostExecute(String result) {
+            if(httpString.equals(SENSOR_LIST)){
+                try {
+                    //FOR THE STATIC SENSOR
+                    JSONArray list = sensorList.getJSONArray("sensors");
+                    for (int i = 0; i < list.length(); i++) {
+                        JSONObject marker = list.getJSONObject(i);
+                        LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
+                        double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
+                        if (noiseLevel < 40) {
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            mMap.addMarker(m);
+
+                        } else if (noiseLevel >= 40 && noiseLevel < 60) {
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                            mMap.addMarker(m);
+
+                        } else {
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            mMap.addMarker(m);
+
+                        }
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            else{
+                try{
+                    //FOR THE USER RILEVATION
+                    JSONArray userlist = userList.getJSONArray("userData");
+                    for(int i = 0; i < userlist.length(); i++){
+                        JSONObject marker = userlist.getJSONObject(i);
+                        LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
+                        String noiseType = marker.getString("noiseType");
+                        if(noiseType.equals(TRAFFIC)){
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("userName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                            mMap.addMarker(m);
+
+                        }
+                        else if(noiseType.equals(CROWD)){
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("userName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            mMap.addMarker(m);
+
+                        }
+                        else{
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("userName"))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                            mMap.addMarker(m);
+
+                        }
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
             if (pd != null)
             {
                 pd.dismiss();
