@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -291,27 +292,57 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             if(httpString.equals(SENSOR_LIST)){
                 try {
                     //FOR THE STATIC SENSOR
+                    String sensorTemp = "";
                     JSONArray list = sensorList.getJSONArray("sensors");
                     for (int i = 0; i < list.length(); i++) {
                         JSONObject marker = list.getJSONObject(i);
+                        sensorTemp = marker.getString("sensorName");
                         LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
                         double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
-                        if (noiseLevel < 40) {
+                        if (noiseLevel < 40 && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinolow);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                    .icon(icon);
+                            mMap.addMarker(m);
+
+                        }
+                        else if ((noiseLevel >= 40 && noiseLevel < 60) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinomed);
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(icon);
+                            mMap.addMarker(m);
+
+                        }
+                        else if ((noiseLevel > 60) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinohigh);
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(icon);
+                            mMap.addMarker(m);
+
+                        }
+
+                        else if (noiseLevel < 40) {
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberrylow);
+                            MarkerOptions m = new MarkerOptions().position(pos)
+                                    .title(marker.getString("sensorName"))
+                                    .icon(icon);
                             mMap.addMarker(m);
 
                         } else if (noiseLevel >= 40 && noiseLevel < 60) {
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberrymed);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                                    .icon(icon);
                             mMap.addMarker(m);
 
-                        } else {
+                        } else if (noiseLevel > 60){
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberryhigh);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                    .icon(icon);
                             mMap.addMarker(m);
 
                         }
@@ -329,23 +360,26 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                         LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
                         String noiseType = marker.getString("noiseType");
                         if(noiseType.equals(TRAFFIC)){
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.traffic);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("userName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                                    .icon(icon);
                             mMap.addMarker(m);
 
                         }
                         else if(noiseType.equals(CROWD)){
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.people);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("userName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                                    .icon(icon);
                             mMap.addMarker(m);
 
                         }
                         else{
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.enjoy);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("userName"))
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                                    .icon(icon);
                             mMap.addMarker(m);
 
                         }
