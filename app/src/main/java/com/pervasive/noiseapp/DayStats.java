@@ -147,7 +147,7 @@ public class DayStats extends AppCompatActivity {
                     try {
                         String result = response.body().string();
                         json = new JSONObject(result);
-                        array = json.getJSONArray("ArduinoUno");
+                        array = json.getJSONArray(sensorName);
                         for(int i = 0; i < array.length(); i++){
                             temp = array.getJSONObject(i);
                             Log.d("In the day Stast", "Before retriving data");
