@@ -6,10 +6,13 @@ The goal of the project is to have a noise map of the city, in order to achieve 
 Added the user noise calculation's function
 
 # ToDo
-- Stats per day
+- Generel fix for graphics and performance
+- Release of v1.0 source code
 
 # Already Done
 
+
+- Stats per day
 - Login(Google)
 - Fragment with map and sensor
 - Drop down menu 
