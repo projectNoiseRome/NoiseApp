@@ -3,6 +3,7 @@ package com.pervasive.noiseapp;
 
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,7 @@ public class CalculateNoise extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_calculate_noise);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         email = getIntent().getExtras().getString("email");
