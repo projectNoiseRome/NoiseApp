@@ -90,7 +90,7 @@ public class DayStats extends AppCompatActivity {
                 break;
         }
         //Toast.makeText(getApplicationContext(), Integer.toString(dayInt), Toast.LENGTH_LONG).show();
-        GetDaySensorValues g = new GetDaySensorValues(dayInt);
+        GetDaySensorValues g = new GetDaySensorValues(day);
         g.execute("");
 
 
@@ -114,12 +114,12 @@ public class DayStats extends AppCompatActivity {
     //Get the sensor's values
     private class GetDaySensorValues extends AsyncTask<String, Void, String> {
 
-        private int day;
+        private String day;
         private JSONArray dayStats = new JSONArray();
         private JSONObject json;
 
 
-        public GetDaySensorValues(int day){
+        public GetDaySensorValues(String day){
             this.day = day;
         }
 
@@ -258,7 +258,7 @@ public class DayStats extends AppCompatActivity {
             data = new BarData(getDataSet());
             chart.setData(data);
             Description description = new Description();
-            description.setText(sensorName);
+            description.setText(day);
             chart.setDescription(description);
             chart.animateXY(2000, 2000);
             chart.invalidate();

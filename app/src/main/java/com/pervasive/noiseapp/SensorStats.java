@@ -3,6 +3,7 @@ package com.pervasive.noiseapp;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,13 +56,15 @@ public class SensorStats extends AppCompatActivity {
 
         //CREATE THE CHART
         pieChart = (PieChart)findViewById(R.id.idPieChart);
-        Description description = new Description();
-        description.setText("Sensor values per day");
-        description.setTextSize(15);
-        pieChart.setDescription(description);
         pieChart.setRotationEnabled(true);
         pieChart.setTransparentCircleAlpha(0);
-        pieChart.setCenterText("Avg per day");
+        pieChart.setCenterText("Average value per day");
+        Description description = new Description();
+        description.setText("");
+        description.setTextSize(15f);
+        description.setTextAlign(Paint.Align.CENTER);
+
+        pieChart.setDescription(description);
         pieChart.setHoleRadius(40f);
         pieChart.setDrawEntryLabels(true);
         try {
@@ -79,7 +82,9 @@ public class SensorStats extends AppCompatActivity {
     private void addDataSet() throws JSONException, ExecutionException, InterruptedException {
         final ArrayList<PieEntry> yEntrys = new ArrayList<PieEntry>();
         ArrayList<String> xEntrys = new ArrayList<String>();
+        String label = "";
         for (int i = 0; i < yValue.length; i++) {
+            label = xValue[i];
             GetSensorValues task = new GetSensorValues(0);
             task.setDay(i);
             String result = task.execute("").get();
@@ -87,19 +92,25 @@ public class SensorStats extends AppCompatActivity {
             if(yValue[i] == 0){
                 //TODO: 10 is default values, means that there are no data on that specific day
                 yValue[i] = 10;
-                yEntrys.add(new PieEntry(yValue[i], i));
+                PieEntry entry = new PieEntry(yValue[i], i);
+                entry.setLabel(label);
+                yEntrys.add(entry);
             }
             else{
-                yEntrys.add(new PieEntry(yValue[i], i));
+                PieEntry entry = new PieEntry(yValue[i], i);
+                entry.setLabel(label);
+                yEntrys.add(entry);
             }
         }
         for(int i = 0; i < xValue.length; i++){
             xEntrys.add(xValue[i]);
         }
+
         //Create dataSet
         PieDataSet pieDataSet = new PieDataSet(yEntrys, "S, M, T, W, T, F, S");
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(15);
+        pieDataSet.setColor(Color.WHITE);
 
         //Add color to dataSet
         ArrayList<Integer> colors = new ArrayList<Integer>();
@@ -118,12 +129,22 @@ public class SensorStats extends AppCompatActivity {
 
         pieDataSet.setColors(colors);
         //Add legend to chart
+
         Legend legend = pieChart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+        legend.setXEntrySpace(4f);
+        legend.setYEntrySpace(0f);
+        legend.setYOffset(0f);
         legend.setEnabled(true);
         PieData pieData = new PieData(pieDataSet);
+        pieChart.setHoleColor(Color.WHITE);
         pieChart.setData(pieData);
+        pieChart.setEntryLabelColor(Color.WHITE);
+        pieChart.setEntryLabelTextSize(10f);
         pieChart.invalidate();
 
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
