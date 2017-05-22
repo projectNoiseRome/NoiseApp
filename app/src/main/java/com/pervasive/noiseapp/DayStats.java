@@ -46,7 +46,9 @@ public class DayStats extends AppCompatActivity {
     private ArrayList<BarEntry> entries = new ArrayList<>();
     private ArrayList<String> labels = new ArrayList<String>();
     private JSONObject values;
-    private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+   // private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+   private final String  SENSOR_VALUES = "http://10.0.2.2:8080/service/sound/getSensorValues";
+
     private BarData data;
     private BarChart chart;
     private int[] noiseValues;

@@ -1,11 +1,16 @@
 package com.pervasive.noiseapp;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
@@ -43,11 +48,13 @@ public class SignInActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
-
+        ImageView img=(ImageView) findViewById(R.id.title_icon);
+        Drawable icon=getResources().getDrawable(R.drawable.icon);
+        img.setImageDrawable(icon);
         // Button listeners
+
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.show_map_button).setOnClickListener(this);

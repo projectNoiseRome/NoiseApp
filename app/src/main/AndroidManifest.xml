@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="MainActivity"
+            android:label="NoiseApp"
             android:theme="@style/AppTheme.NoActionBar">
 
             <!--
@@ -53,7 +53,7 @@
 
         <activity
             android:name=".SignInActivity"
-            android:label="@string/app_name">
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -36,7 +36,8 @@ public class SensorStats extends AppCompatActivity {
     private String sensorName;
     private ProgressDialog mProgressDialog;
     private JSONObject values;
-    private final String  SENSOR_AVG = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getAvgValues";
+    //private final String  SENSOR_AVG = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getAvgValues";
+    private final String  SENSOR_AVG = "http://10.0.2.2:8080/service/sound/getAvgValues";
     private PieChart pieChart;
     private String[] xValue = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     private float[]  yValue = new float[7];

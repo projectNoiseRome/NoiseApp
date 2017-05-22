@@ -23,7 +23,9 @@ public class Stats extends AppCompatActivity {
 
     ListView sensorView;
     private JSONObject sensorList = new JSONObject();
-    private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
+    //private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
+    private final String SENSOR_LIST = "http://10.0.2.2:8080/service/sound/getSensorList";
+
     private ProgressDialog mProgressDialog;
     private String[] sensor_name;
     private String[] sensor_position;
