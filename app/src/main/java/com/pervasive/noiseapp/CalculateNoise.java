@@ -1,20 +1,27 @@
 package com.pervasive.noiseapp;
 
 
-
+import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
+import android.location.LocationListener;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
 import org.json.JSONObject;
+
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -43,11 +50,17 @@ public class CalculateNoise extends AppCompatActivity {
     private Button startRecording = null;
     private Button stopRecording = null;
     private AudioRecord recorder = null;
-    private String email ="";
+    private String email = "";
     private String decibels;
+    private double latitude;
+    private double longitude;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
     private static final String TAG = "SoundRecordingDemo";
     private ProgressDialog mProgressDialog;
-    private static final String POST_NOISE = "http://10.0.2.2:8080/service/sound/userNoiseLevel";
+    //private static final String POST_NOISE = "http://10.0.2.2:8080/service/sound/userNoiseLevel";
+    private static final String POST_NOISE = "http://192.168.1.180:8080/NoiseAppServer/service/sound/userNoiseLevel";
+    //private static final String POST_NOISE = "http://10.0.2.2:8080/NoiseAppServer/service/sound/userNoiseLevel";
 
     /** Called when the activity is first created. */
     @Override
@@ -59,7 +72,6 @@ public class CalculateNoise extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         email = getIntent().getExtras().getString("email");
-
         //check permission
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -69,31 +81,30 @@ public class CalculateNoise extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_ACCESS_RECORD_AUDIO);
         }
 
+
         //mrec = new MediaRecorder();
 
-        startRecording = (Button)findViewById(R.id.startrecording);
-        stopRecording = (Button)findViewById(R.id.stoprecording);
+        startRecording = (Button) findViewById(R.id.startrecording);
+        stopRecording = (Button) findViewById(R.id.stoprecording);
 
-        startRecording.setOnClickListener(new View.OnClickListener(){
+        startRecording.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                try
-                {
+                try {
                     //startRecording.setEnabled(false);
                     stopRecording.setEnabled(true);
                     stopRecording.requestFocus();
                     decibels = "" + getNoiseLevel();
-                    TextView tv = (TextView)findViewById(R.id.decibelView);
-                    tv.setText(decibels.substring(0,5));
+                    TextView tv = (TextView) findViewById(R.id.decibelView);
+                    tv.setText(decibels.substring(0, 5));
                     //startRecording();
-                }catch (Exception ee)
-                {
-                    Log.e(TAG,"Caught io exception " + ee.getMessage());
+                } catch (Exception ee) {
+                    Log.e(TAG, "Caught io exception " + ee.getMessage());
                 }
 
             }
         });
 
-        stopRecording.setOnClickListener(new View.OnClickListener(){
+        stopRecording.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startRecording.setEnabled(true);
                 stopRecording.setEnabled(false);
@@ -107,6 +118,7 @@ public class CalculateNoise extends AppCompatActivity {
         startRecording.setEnabled(true);
 
     }
+
 
 
     /*public void startRecording() throws IOException{
@@ -134,10 +146,7 @@ public class CalculateNoise extends AppCompatActivity {
     }
 
     protected void postNoise() {
-        double latitude = 0.0;
-        double longitude = 0.0;
         int locationPermission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
-
         //check permission
         if (locationPermission != PackageManager.PERMISSION_GRANTED) {
             // Show rationale and request permission.
@@ -147,16 +156,21 @@ public class CalculateNoise extends AppCompatActivity {
 
         } else {
             LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            //this is a little problem but, actually i don't need it
+            if (lm != null) {
+                Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                //this is a little problem but, actually i don't need it
 
-            if (location != null) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                Log.d("long", "" + longitude);
-                Log.d("lat", "" + latitude);
+                if (location != null) {
+                    longitude = location.getLongitude();
+                    latitude = location.getLatitude();
+                    Log.d("long", "" + longitude);
+                    Log.d("lat", "" + latitude);
+                }
+
             }
         }
+
+
 
         final JSONObject actualData = new JSONObject();
         Spinner sp = (Spinner) findViewById(R.id.spinner);
@@ -174,6 +188,7 @@ public class CalculateNoise extends AppCompatActivity {
         snl.execute("");
 
     }
+
 
     //HTTP CALL
     //Get the sensor's values

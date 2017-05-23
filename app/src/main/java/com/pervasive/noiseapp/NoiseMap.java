@@ -44,13 +44,16 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     private JSONObject userList = new JSONObject();
     //private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
     //private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
-    private final String SENSOR_LIST = "http://10.0.2.2:8080/service/sound/getSensorList";
-    private final String USER_LIST = "http://10.0.2.2:8080/service/sound/getUserDataList";
+    private final String SENSOR_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorList";
+    private final String USER_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getUserDataList";
+    //private final String SENSOR_LIST = "http://10.0.2.2:8080/service/sound/getSensorList";
+    //private final String USER_LIST = "http://10.0.2.2:8080/service/sound/getUserDataList";
 
     //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    private final String  SENSOR_STATS = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorStats";
     //private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
 
-    private final String  SENSOR_STATS = "http://10.0.2.2:8080/service/sound/getSensorStats";
+    //private final String  SENSOR_STATS = "http://10.0.2.2:8080/service/sound/getSensorStats";
     //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
     private final String TRAFFIC = "traffic";
     private final String CROWD = "crowd";
@@ -103,6 +106,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION );
 
         } else {
+
             mMap.setMyLocationEnabled(true);
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -121,68 +125,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
         getSensorList taskUser = new getSensorList(USER_LIST, this.getContext());
         taskSensor.execute("");
         taskUser.execute("");
-        /*
-        try {
-            //FOR THE STATIC SENSOR
-            JSONArray list = sensorList.getJSONArray("sensors");
-            for(int i = 0; i < list.length(); i++){
-                JSONObject marker = list.getJSONObject(i);
-                LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
-                double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
-                if(noiseLevel < 40){
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("sensorName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    mMap.addMarker(m);
 
-                }
-                else if(noiseLevel >= 40 && noiseLevel < 60){
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("sensorName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                    mMap.addMarker(m);
-
-                }
-                else{
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("sensorName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    mMap.addMarker(m);
-
-                }
-            }
-            //FOR THE USER RILEVATION
-            JSONArray userlist = userList.getJSONArray("userData");
-            for(int i = 0; i < userlist.length(); i++){
-                JSONObject marker = userlist.getJSONObject(i);
-                LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
-                String noiseType = marker.getString("noiseType");
-                if(noiseType.equals(TRAFFIC)){
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("userName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                    mMap.addMarker(m);
-
-                }
-                else if(noiseType.equals(CROWD)){
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("userName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    mMap.addMarker(m);
-
-                }
-                else{
-                    MarkerOptions m = new MarkerOptions().position(pos)
-                            .title(marker.getString("userName"))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                    mMap.addMarker(m);
-
-                }
-            }
-        } catch (Exception e) {
-            Toast.makeText(this.getContext(), e.toString(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }*/
     }
 
 
