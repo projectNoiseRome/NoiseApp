@@ -97,7 +97,9 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this  ,Stats.class);
             startActivity(intent);
         }else if (id == R.id.nav_manage) {
-            fm.beginTransaction().replace(R.id.content_frame, new Settings()).commit();
+            //fm.beginTransaction().replace(R.id.content_frame, new Settings()).commit();
+            Intent intent = new Intent(this  ,Settings.class);
+            startActivity(intent);
         /*} else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

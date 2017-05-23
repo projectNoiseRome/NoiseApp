@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Info</string>
     <string name="title_activity_noise_map">Map</string>
     <string name="title_activity_sign_in">Sign in</string>
 
@@ -53,10 +53,18 @@
     <string name="title_activity_sensor_stats">SensorStats</string>
     <string name="title_activity_day_stats">DayStats</string>
 
+
     <string-array name="noiseType">
             <item>Traffic</item>
         <item>Crowd</item>
         <item>Entertainment</item>
     </string-array>
+    <!--link per le info-->
+    <string name="linkedinBoa"><a href="https://www.linkedin.com/in/federico-boarelli-a4885311b/">LinkedIn Federico Boarelli</a></string>
+    <string name="linkedinAlessio"><a href="https://www.linkedin.com/in/alessio-tirabasso-44a023140/">LinkedIn Alessio Tirabasso</a></string>
+    <string name="linkedinNigro"><a href="https://www.linkedin.com/in/marco-nigro-283024140/">LinkedIn Marco Nigro</a></string>
+    <string name="linkGitHub"><a href="https://github.com/projectNoiseRome">ProjectNoiseRome</a></string>
+
+
 
 </resources>
