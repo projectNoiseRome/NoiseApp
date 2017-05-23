@@ -112,7 +112,7 @@ public class SensorStats extends AppCompatActivity {
         PieDataSet pieDataSet = new PieDataSet(yEntrys, "S, M, T, W, T, F, S");
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(15);
-        pieDataSet.setColor(Color.WHITE);
+        pieDataSet.setColor(Color.BLACK);
 
         //Add color to dataSet
         ArrayList<Integer> colors = new ArrayList<Integer>();
@@ -145,7 +145,7 @@ public class SensorStats extends AppCompatActivity {
         PieData pieData = new PieData(pieDataSet);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setData(pieData);
-        pieChart.setEntryLabelColor(Color.WHITE);
+        pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setEntryLabelTextSize(10f);
         pieChart.invalidate();
 
