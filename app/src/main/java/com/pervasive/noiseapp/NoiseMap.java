@@ -109,7 +109,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
             mMap.setMyLocationEnabled(true);
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             //this is a little problem but, actually i don't need it
 
             if( location!=null ){
