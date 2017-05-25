@@ -4,6 +4,7 @@ package com.pervasive.noiseapp;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -42,16 +43,16 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private JSONObject sensorList = new JSONObject();
     private JSONObject userList = new JSONObject();
-    //private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
-    //private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
-    private final String SENSOR_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorList";
-    private final String USER_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getUserDataList";
+    private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
+    private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
+    //private final String SENSOR_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorList";
+    //private final String USER_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getUserDataList";
     //private final String SENSOR_LIST = "http://10.0.2.2:8080/service/sound/getSensorList";
     //private final String USER_LIST = "http://10.0.2.2:8080/service/sound/getUserDataList";
 
     //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
-    private final String  SENSOR_STATS = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorStats";
-    //private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
+    //private final String  SENSOR_STATS = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorStats";
+    private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
 
     //private final String  SENSOR_STATS = "http://10.0.2.2:8080/service/sound/getSensorStats";
     //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
@@ -150,6 +151,9 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
             if(!sensor.equals("")) {
                 call.setSensorName(sensor);
                 call.makeCall();
+                Intent intent = new Intent(getContext(), SensorStats.class);
+                intent.putExtra("sensorName", sensor);
+                startActivity(intent);
             }
             else {
                 JSONArray listuser = userList.getJSONArray("userData");
@@ -163,6 +167,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                     }
                 }
                 Toast.makeText(this.getContext(), obj.getString("userName")+": \n Noise Value : " + obj.getString("noiseLevel")+": \n Noise Type : " + obj.getString("noiseType"), Toast.LENGTH_LONG).show();
+
             }
         }catch(JSONException e){
             e.printStackTrace();
@@ -247,7 +252,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                         sensorTemp = marker.getString("sensorName");
                         LatLng pos = new LatLng(Double.parseDouble(marker.getString("latitude")), Double.parseDouble(marker.getString("longitude")));
                         double noiseLevel = Double.parseDouble(marker.getString("noiseLevel"));
-                        if (noiseLevel < 40 && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                        if (noiseLevel < 45 && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinolow);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
@@ -255,7 +260,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                             mMap.addMarker(m);
 
                         }
-                        else if ((noiseLevel >= 40 && noiseLevel < 60) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                        else if ((noiseLevel >= 45 && noiseLevel < 72) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinomed);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
@@ -263,7 +268,7 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
                             mMap.addMarker(m);
 
                         }
-                        else if ((noiseLevel > 60) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
+                        else if ((noiseLevel > 72) && (sensorTemp.contains("Arduino") || sensorTemp.contains("Genuino"))) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.arduinohigh);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
@@ -272,21 +277,21 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
 
                         }
 
-                        else if (noiseLevel < 40) {
+                        else if (noiseLevel < 45) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberrylow);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
                                     .icon(icon);
                             mMap.addMarker(m);
 
-                        } else if (noiseLevel >= 40 && noiseLevel < 60) {
+                        } else if (noiseLevel >= 45 && noiseLevel < 72) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberrymed);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
                                     .icon(icon);
                             mMap.addMarker(m);
 
-                        } else if (noiseLevel > 60){
+                        } else if (noiseLevel > 72){
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.raspberryhigh);
                             MarkerOptions m = new MarkerOptions().position(pos)
                                     .title(marker.getString("sensorName"))
