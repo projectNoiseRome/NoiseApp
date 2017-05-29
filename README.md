@@ -13,11 +13,11 @@ Released the 1.0 version
 - Material design UI
 - Mobile noise's calculation
 
-# Links
+## Links
 Presentation of the project: https://github.com/projectNoiseRome/projectNoiseRome
 Server rep: https://github.com/projectNoiseRome/NoiseAppServer
 
-# Developed by:<br />
+## Developed by:<br />
 Marco Nigro       : https://www.linkedin.com/in/marco-nigro-283024140/<br />
 Alessio Tirabasso : https://www.linkedin.com/in/alessio-tirabasso-44a023140/<br />
 Federico Boarelli : https://www.linkedin.com/in/federico-boarelli-a4885311b/<br />
