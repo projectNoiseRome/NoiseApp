@@ -43,19 +43,20 @@ public class NoiseMap extends Fragment implements OnMapReadyCallback, GoogleMap.
     static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private JSONObject sensorList = new JSONObject();
     private JSONObject userList = new JSONObject();
-    private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
-    private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
-    //private final String SENSOR_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorList";
-    //private final String USER_LIST = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getUserDataList";
+
+    //AZURE IP
+    private final String SENSOR_LIST = "http://noiseappproject.azurewebsites.net/service/sound/getSensorList";
+    private final String USER_LIST = "http://noiseappproject.azurewebsites.net/service/sound/getUserDataList";
+    private final String  SENSOR_STATS = "http://noiseappproject.azurewebsites.net/service/sound/getSensorStats";
+    //ECLIPSE IP
+    //private final String SENSOR_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorList";
+    //private final String USER_LIST = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getUserDataList";
+    //private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
+    //NETBEANS IP
     //private final String SENSOR_LIST = "http://10.0.2.2:8080/service/sound/getSensorList";
     //private final String USER_LIST = "http://10.0.2.2:8080/service/sound/getUserDataList";
-
-    //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
-    //private final String  SENSOR_STATS = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorStats";
-    private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
-
     //private final String  SENSOR_STATS = "http://10.0.2.2:8080/service/sound/getSensorStats";
-    //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
+
     private final String TRAFFIC = "traffic";
     private final String CROWD = "crowd";
     //private final String ENTERTAINMENT = "entertainment";

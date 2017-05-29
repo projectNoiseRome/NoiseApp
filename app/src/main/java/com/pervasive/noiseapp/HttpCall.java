@@ -30,14 +30,17 @@ public class HttpCall extends Activity{
     private JSONObject sensorList;
 
     //ALL HTTP CALL POSSIBLE
-    //private final String  SENSOR_VALUES = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorValues";
-    //private final String  SENSOR_STATS = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorStats";
+    //NETBEANS IP
     //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/service/sound/getSensorValues";
     //private final String  SENSOR_STATS = "http://10.0.2.2:8080/service/sound/getSensorStats";
-    private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
-    private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
+    //ECLIPSE IP
+    //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    //private final String  SENSOR_STATS = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorStats";
+    //AZURE IP
+    private final String  SENSOR_VALUES = "http://noiseappproject.azurewebsites.net/service/sound/getSensorValues";
+    private final String  SENSOR_STATS = "http://noiseappproject.azurewebsites.net/service/sound/getSensorStats";
 
-    //private final String AZURE = "http://noiseapp.azurewebsites.net/service/sound/getSensorValues";
+
 
 
 

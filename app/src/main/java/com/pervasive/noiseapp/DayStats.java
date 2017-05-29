@@ -46,8 +46,12 @@ public class DayStats extends AppCompatActivity {
     private ArrayList<BarEntry> entries = new ArrayList<>();
     private ArrayList<String> labels = new ArrayList<String>();
     private JSONObject values;
-    private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
-    //private final String  SENSOR_VALUES = "http://192.168.1.180:8080/NoiseAppServer/service/sound/getSensorValues";
+
+    //AZURE IP
+    private final String  SENSOR_VALUES = "http://noiseappproject.azurewebsites.net/service/sound/getSensorValues";
+    //ECLIPSE IP
+    //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/NoiseAppServer/service/sound/getSensorValues";
+    //NETBEANS IP
     //private final String  SENSOR_VALUES = "http://10.0.2.2:8080/service/sound/getSensorValues";
 
     private BarData data;
@@ -71,7 +75,7 @@ public class DayStats extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), day, Toast.LENGTH_LONG).show();
         switch(day){
             case "Sunday":
-                dayInt = 0;
+                dayInt = 7;
                 break;
             case "Monday":
                 dayInt = 1;

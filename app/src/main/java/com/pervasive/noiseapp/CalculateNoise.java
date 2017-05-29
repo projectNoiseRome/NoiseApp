@@ -58,9 +58,12 @@ public class CalculateNoise extends AppCompatActivity {
     private LocationListener locationListener;
     private static final String TAG = "SoundRecordingDemo";
     private ProgressDialog mProgressDialog;
+    //NETBEANS IP
     //private static final String POST_NOISE = "http://10.0.2.2:8080/service/sound/userNoiseLevel";
-    //private static final String POST_NOISE = "http://192.168.1.180:8080/NoiseAppServer/service/sound/userNoiseLevel";
-    private static final String POST_NOISE = "http://10.0.2.2:8080/NoiseAppServer/service/sound/userNoiseLevel";
+    //ECLIPSE IP
+    //private static final String POST_NOISE = "http://10.0.2.2:8080/NoiseAppServer/service/sound/userNoiseLevel";
+    //AZURE IP
+    private static final String POST_NOISE = "http://noiseappproject.azurewebsites.net/service/sound/userNoiseLevel";
 
     /** Called when the activity is first created. */
     @Override
