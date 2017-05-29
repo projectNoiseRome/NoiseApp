@@ -14,7 +14,7 @@ Released the 1.0 version
 - Mobile noise's calculation
 
 ## Links
-Presentation of the project: https://github.com/projectNoiseRome/projectNoiseRome
+Presentation of the project: https://github.com/projectNoiseRome/projectNoiseRome <br />
 Server rep: https://github.com/projectNoiseRome/NoiseAppServer
 
 ## Developed by:<br />
