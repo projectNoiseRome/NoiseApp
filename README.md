@@ -13,9 +13,37 @@ Released the 1.0 version
 - Material design UI
 - Mobile noise's calculation
 
+## Screenshots
+Here there are some screenshots from our app:<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/Login.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 1 - Login<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/NoiseMap.PNG" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 2 - Home with the map<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/NavigationView.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 3 - NavigationView menu<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/SensorList.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 4 - Sensors list<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/Stats1.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 5 - Sensor Stats per day<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/Stats3.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 6 - Sensor Stats per hour<br />
+
+<img src="https://github.com/projectNoiseRome/projectNoiseRome/blob/master/Screenshots/Calculate1.png" alt="Drawing" width="100" height="200" description="Login"/><br />
+> 7 - Calculate Noise activity<br />
+
+
 ## Links
 Presentation of the project: https://github.com/projectNoiseRome/projectNoiseRome <br />
-Server rep: https://github.com/projectNoiseRome/NoiseAppServer
+Server rep: https://github.com/projectNoiseRome/NoiseAppServer<br />
+Slides initial concept: https://www.slideshare.net/MarcoNigro6/noise-app<br />
+MVP: https://www.slideshare.net/MarcoNigro6/noise-app-mvp<br />
+Final Presentation: https://www.slideshare.net/MarcoNigro6/noiseapp-final-presentation<br/>
 
 ## Developed by:<br />
 Marco Nigro       : https://www.linkedin.com/in/marco-nigro-283024140/<br />
