@@ -44,6 +44,8 @@ Server rep: https://github.com/projectNoiseRome/NoiseAppServer<br />
 Slides initial concept: https://www.slideshare.net/MarcoNigro6/noise-app<br />
 MVP: https://www.slideshare.net/MarcoNigro6/noise-app-mvp<br />
 Final Presentation: https://www.slideshare.net/MarcoNigro6/noiseapp-final-presentation<br/>
+Website: http://noiseappproject.azurewebsites.net/   (work in progress)<br />
+Video presentation:https://www.youtube.com/watch?v=pT_vTS6CXI8&feature=youtu.be<br/>
 
 ## Developed by:<br />
 Marco Nigro       : https://www.linkedin.com/in/marco-nigro-283024140/<br />
